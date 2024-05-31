@@ -24,9 +24,14 @@ Route::get('/', function () {
         'title' => 'PDF',
         'data' => $user
     ])->render();
-    Browsershot::html($html)
-        ->setIncludePath('$PATH:/c/Program Files/nodejs/npm')
-        ->save('exportpdf.pdf');
+   $pdf= Browsershot::html($html)
+         ->setIncludePath('$PATH:/usr/local/bin')
+         ->pdf();
+    return new Response($pdf,200,[
+        'Content-Type"=>"application/pdf',
+        'Content-Disposition'=>'attachment; filename="example.pdf"',
+        'Content-Length'=>strlen($pdf)
+    ]);
 });
 
 // Route::get('/', function () {
