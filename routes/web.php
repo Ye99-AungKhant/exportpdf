@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use App\Services\PdfWrapper;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Mail;
@@ -18,17 +19,28 @@ use Spatie\Browsershot\Browsershot;
 */
 
 Route::get('/', function () {
-    $pdf = (new PdfWrapper())
-        ->loadView('pdfs.charts', [
-            'title' => 'pie chart',
-        ]);
-
-    Mail::send('emails.test', [], function ($message) use ($pdf) {
-        $message->to('abc@gmail.com');
-        $message->attachData($pdf->generate()->pdf(), 'doc.pdf', [
-            'mime' => 'application/pdf',
-        ]);
-    });
-
-    dd('done');
+    $user = User::get();
+    $html = view("pdfs.example", [
+        'title' => 'PDF',
+        'data' => $user
+    ])->render();
+    Browsershot::html($html)
+        ->setIncludePath('$PATH:/c/Program Files/nodejs/npm')
+        ->save('exportpdf.pdf');
 });
+
+// Route::get('/', function () {
+//     $pdf = (new PdfWrapper())
+//         ->loadView('pdfs.charts', [
+//             'title' => 'pie chart',
+//         ]);
+
+//     Mail::send('emails.test', [], function ($message) use ($pdf) {
+//         $message->to('abc@gmail.com');
+//         $message->attachData($pdf->generate()->pdf(), 'doc.pdf', [
+//             'mime' => 'application/pdf',
+//         ]);
+//     });
+
+//     dd('done');
+// });
